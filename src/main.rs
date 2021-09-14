@@ -15,9 +15,12 @@ fn main() {
     //me armo el ahorcado
     let mut game = Ahorcado::create_ahorcado(letters);
 
-    while game.remaining_lives() > 0 {
+    while game.is_ongoing() == true {
         game.play_round();
     }
+
+    game.print_word();
+    println!("fin del juego!");
 }
 /*
     UNA RONDA:

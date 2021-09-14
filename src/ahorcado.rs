@@ -7,8 +7,8 @@ use crate::letter;
 pub struct Ahorcado {
     word: Vec<letter::Letter>,
     tries: u32,
-    guesses: Vec<char>
-
+    guesses: Vec<char>,
+    guessed_word: bool
 }
 
 impl Ahorcado {
@@ -17,7 +17,8 @@ impl Ahorcado {
         Ahorcado {
             word: letter::Letter::create_word(palabra),
             tries : 5,
-            guesses: Vec::new()
+            guesses: Vec::new(),
+            guessed_word: false
         }
     }
     
@@ -28,7 +29,7 @@ impl Ahorcado {
             
             cw = match self.word[i].get_value_for_print() {
                  Some(c) => c,
-                 None => '-'
+                 None => '_'
             };   
             print!(" {}",cw);
         }
@@ -50,17 +51,19 @@ impl Ahorcado {
 
         self.print_round_message();
 
-        let mut w:char = self.clone().ask_for_a_guess();
+        let mut w:char = self.ask_for_a_guess();
 
         while w.to_ascii_lowercase().is_ascii_alphabetic() == false {
             println!("No se ingresó una letra valida");
-            w = self.clone().ask_for_a_guess();
+            w = self.ask_for_a_guess();
         }
 
         self.make_guess(w);
+        self.check_for_the_win();
+
     }
 
-    pub fn print_round_message(&mut self){
+    pub fn print_round_message(&self){
         print!("La palabra hasta el momento es:");
         self.print_word();
 
@@ -70,7 +73,7 @@ impl Ahorcado {
         println!("te quedan {} intentos.", self.tries);
     }
 
-    pub fn ask_for_a_guess(self) -> char {
+    pub fn ask_for_a_guess(&self) -> char {
         println!("ingresá una letra");
         
         //creo un string donde guardar lo que se va a leer por stdin
@@ -91,19 +94,49 @@ impl Ahorcado {
         
         for i in 0..self.word.len() {
             if self.word[i].check_guess(guess){
-                correct += 1;
+                correct = correct + 1;
             }
         }
-
+        // resto una vida si la letra no forma parte de la palabras
         if correct == 0 {
             self.tries -= 1;
         }
+        //agrego la letra a la lista de palabras ingresadas
         if !self.guesses.contains(&guess){
             self.guesses.push(guess);
         }
     }
-
-    pub fn remaining_lives(&mut self) -> u32 {
+/*
+    pub fn remaining_lives(&self) -> u32 {
         self.tries
+    }
+*/
+    pub fn is_ongoing(&self) -> bool {
+        
+        !self.guessed_word && self.tries > 0
+    }
+
+    pub fn check_for_the_win(&mut self) {
+        let mut printed_guess: Vec<char> = Vec::new();
+        let mut a: Vec<char> = Vec::new();
+
+        for i in 0..self.word.len(){
+            
+            printed_guess.push( match self.word[i].get_value_for_print() {
+                                    Some(c) => c,
+                                    None => '_'
+                                });
+            
+            a.push(self.word[i].get_letter());
+        }
+
+        let s: String = a.iter().collect();
+        let v: String = printed_guess.iter().collect();
+
+        let matching = s.chars().zip(v.chars()).filter(|&(s, v)| s == v).count();
+
+        if matching == self.clone().word.len(){
+            self.guessed_word = true;
+        }
     }
 }

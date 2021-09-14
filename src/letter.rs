@@ -21,10 +21,14 @@ impl Letter {
     // revisa si se adivinó la letra, cambia su "estado" a adivinado
     // 
     pub fn check_guess(&mut self, guess:char) -> bool {
+        let ret;
         if guess == self.c {
             self.guessed = true;
+            ret = true;
+        } else {
+            ret = false;
         }
-        self.guessed
+        ret
     }
 
     pub fn create_word(vec: Vec<char>) -> Vec<Letter>{
@@ -35,5 +39,9 @@ impl Letter {
         }
     
         word
+    }
+
+    pub fn get_letter(&self) -> char {
+        self.c
     }
 }
