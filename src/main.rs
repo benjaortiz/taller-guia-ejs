@@ -1,49 +1,36 @@
-mod letter;
-mod ahorcado;
-use ahorcado::Ahorcado;
+use std::{fs::File, io::{self, BufRead}};
+
+mod text_cleaner;
+mod repositorio;
 
 fn main() {
-    println!("Bienvenido al ahorcado!");
-
-    let letters = ahorcado::Ahorcado::load_word("data/palabras.txt");
+    println!("Bienvenido al contador de palabras!");
     
-    //imprimo algunas boludeces
- //   println!("\nla palabra tiene {} letras\n", letters.len());
+    let path = "data/fitness_test.txt";
+    let file = File::open(path).expect("error abriendo el archivo");
+    let mut buffer = io::BufReader::new(file);
 
- //   println!("{:?}", letters);
-   
-    //me armo el ahorcado
-    let mut game = Ahorcado::create_ahorcado(letters);
+    let mut linea = String::new();
+    let linea_formateada = Vec::new();
+    let repo = repositorio::Repositorio::crear_repo();
+    
+    while buffer.read_line(&mut linea).expect("error leyendo archivo") > 0 {
+        linea_formateada = text_cleaner::formatear_linea(&linea);
 
-    while game.is_ongoing() == true {
-        game.play_round();
+        repo.guardar_palabras(&linea_formateada);
     }
-
-    game.print_word();
-    println!("fin del juego!");
 }
-/*
-    UNA RONDA:
-    1. printeo la pantalla de inicio
-   
-    2. le pido una letra al jugador
-        2.1 valido que sea una letra 
-        2.2 valido que no la haya tirado antes
-   
-    3. Chequeo si la letra esta en la palabra
-        3.1 si está:
-            3.1.1 seteo como adivinada la/las letra/s
-    
-        3.2 Si no está:
-            3.2.1 le resto 1 intento al jugador
-        
-        3.3 agrego la letra a la lista de adivinadas
-    4. imprimo mensaje de fin de ronda
-    5. finalizo ronda: 
-        5.1 si quedan intentos vuelvo a "2." (LOOP)
-        
-        5.2 si no quedan intentos: 
-            5.2.1 indicó que el jugador perdió el juego
-            5.2.2 muestro cual era la palabra
-*/
 
+
+
+/*
+Para llenar el hashmap 
+1. leo una linea
+2. la separo usando split_whitespace y collect: me queda un vector de palabras
+3. me fijo de limpiar la punctuation, hacer trim y pasarlas a lowercase
+4. MIENTRAS voy haciendo el '3.' voy pasando las palabras al hashmap
+    4.1 si la palabra esta, entonces hago un get de el value y le hago +1,
+        si no esta entonces la agrego, con un 1 como value
+
+5. sigo haciendo eso mientras que read_line() me devuelva un Ok() > 0
+*/
