@@ -29,7 +29,7 @@ impl Repositorio {
     pub fn imprimir_frecuencia(&mut self){
         let mut palabras = self.obtener_listado_de_elementos();
 
-        palabras.sort_by(|a,b| a.1.cmp(&b.1));
+        palabras.sort_by(|a,b| b.1.cmp(&a.1));
 
         for (word,freq) in palabras {
             println!("{} => {}", word, freq);
