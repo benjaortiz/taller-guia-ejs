@@ -11,14 +11,16 @@ fn main() {
     let mut buffer = io::BufReader::new(file);
 
     let mut linea = String::new();
-    let linea_formateada = Vec::new();
-    let repo = repositorio::Repositorio::crear_repo();
+    let mut linea_formateada;
+    let mut repo = repositorio::Repositorio::crear_repo();
     
     while buffer.read_line(&mut linea).expect("error leyendo archivo") > 0 {
         linea_formateada = text_cleaner::formatear_linea(&linea);
 
         repo.guardar_palabras(&linea_formateada);
     }
+
+    repo.imprimir_frecuencia();
 }
 
 
