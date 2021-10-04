@@ -4,14 +4,12 @@ mod threadpool;
 fn main() {
     let pool = ThreadPool::new(4);
 
-    for i in 10..15 {
+    for i in 10..18 {
         pool.run(move || {
             std::thread::sleep(std::time::Duration::from_millis(250 * i));
             println!("This is Task {}", i);
         });
     }
-
-    std::thread::sleep(std::time::Duration::from_secs(5));
 }
 
 

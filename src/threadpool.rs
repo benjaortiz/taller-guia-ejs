@@ -59,10 +59,11 @@ impl Drop for ThreadPool {
         }
 
         for worker in &mut self.workers {
-            println!("Worker[{}]: *se muere*", worker.id);
             if let Some(thread) = worker.thread.take() {
                 thread.join().unwrap();
             }
+
+            println!("Worker[{}]: *se muere*", worker.id);
         }
     }
 }
@@ -89,7 +90,7 @@ impl Worker {
                     job.call_box();
                 }
                 Message::Terminate => {
-                    println!("worker [{}]: * se muere* ", id);
+                    println!("despidieron al worker {} ", id);
                     break;
                 }
             }
