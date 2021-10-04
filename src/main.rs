@@ -1,11 +1,21 @@
-use std::{
-    io::{Read, Write},
-    net::{TcpListener, TcpStream},
-};
-
 use threadpool::ThreadPool;
 
 mod threadpool;
+fn main() {
+    let pool = ThreadPool::new(4);
+
+    for i in 10..15 {
+        pool.run(move || {
+            std::thread::sleep(std::time::Duration::from_millis(250 * i));
+            println!("This is Task {}", i);
+        });
+    }
+
+    std::thread::sleep(std::time::Duration::from_secs(5));
+}
+
+
+
 /*
 fn main() {
     let listener = TcpListener::bind("127.0.0.1:8080").unwrap();
@@ -34,14 +44,3 @@ fn handle_connection(mut stream: TcpStream) {
     stream.flush().expect("error realizando flush");
 }
 */
-
-fn main() {
-    let pool = ThreadPool::new(4);
-
-    for i in 10..15{
-        pool.run(move || { 
-            std::thread::sleep(std::time::Duration::from_millis(250 * i));
-            println!("This is Task {}", i);
-        });
-    }
-}
